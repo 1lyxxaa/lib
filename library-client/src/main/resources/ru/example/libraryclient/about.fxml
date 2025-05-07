@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.example.libraryclient.AboutController" alignment="CENTER" spacing="15" style="-fx-padding: 25;">
+    <Label text="Об авторе" style="-fx-font-size: 20; -fx-font-weight: bold;"/>
+    <Label text="ФИО: Маруха Илья Евгеньевич" style="-fx-font-size: 15;"/>
+    <Label text="Образование: Финансовый университет при Правительстве Российской Федерации" wrapText="true" style="-fx-font-size: 15;"/>
+    <Label text="Факультет: информационных технологий и анализа больших данных" wrapText="true" style="-fx-font-size: 15;"/>
+    <Label text="Направление: Программная инженерия, Технологии разработки программного обеспечения" wrapText="true" style="-fx-font-size: 15;"/>
+    <Label text="Курс: 2" style="-fx-font-size: 15;"/>
+    <Label fx:id="versionLabel" text="" style="-fx-font-size: 14;"/>
+    <Button fx:id="closeBtn" text="Закрыть" minWidth="100"/>
+</VBox> 

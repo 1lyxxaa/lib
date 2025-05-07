@@ -1,0 +1,7 @@
+POST http://localhost:8080/api/authors
+Content-Type: application/json
+
+{
+  "name": "Лев Толстой",
+  "birthYear": 1828
+}

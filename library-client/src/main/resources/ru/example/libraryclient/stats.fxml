@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.example.libraryclient.StatsController" spacing="10" alignment="TOP_CENTER" style="-fx-padding: 15;">
+    <Label text="Статистика" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    <TabPane fx:id="tabPane" prefWidth="500" prefHeight="300">
+        <tabs>
+            <Tab text="Жанры">
+                <VBox spacing="5" alignment="TOP_CENTER">
+                    <TableView fx:id="genreTable" prefHeight="200">
+                        <columns>
+                            <TableColumn fx:id="genreCol" text="Жанр" prefWidth="200"/>
+                            <TableColumn fx:id="genreCountCol" text="Количество книг" prefWidth="150"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+            <Tab text="Авторы">
+                <VBox spacing="5" alignment="TOP_CENTER">
+                    <TableView fx:id="authorTable" prefHeight="200">
+                        <columns>
+                            <TableColumn fx:id="authorNameCol" text="Автор" prefWidth="200"/>
+                            <TableColumn fx:id="authorCountCol" text="Количество книг" prefWidth="150"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+            <Tab text="Страницы">
+                <VBox spacing="5" alignment="TOP_CENTER">
+                    <Label fx:id="pagesStatsLabel" text="" style="-fx-font-size: 14;"/>
+                </VBox>
+            </Tab>
+        </tabs>
+    </TabPane>
+    <Button fx:id="closeBtn" text="Закрыть"/>
+    <Label fx:id="statusLabel" text="" style="-fx-text-fill: #b00;"/>
+</VBox> 

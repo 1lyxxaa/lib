@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.example.libraryclient.BookFormController" hgap="10" vgap="10" style="-fx-padding: 15;">
+    <Label text="Название:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+    <TextField fx:id="titleField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+    <Label text="Год:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+    <TextField fx:id="yearField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+    <Label text="Жанр:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+    <TextField fx:id="genreField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+    <Label text="Страницы:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+    <TextField fx:id="pagesField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+    <Label text="Автор:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+    <ComboBox fx:id="authorBox" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+    <HBox spacing="10" alignment="CENTER" GridPane.rowIndex="5" GridPane.columnIndex="0" GridPane.columnSpan="2">
+        <Button fx:id="saveBtn" text="Сохранить"/>
+        <Button fx:id="cancelBtn" text="Отмена"/>
+    </HBox>
+    <Label fx:id="errorLabel" text="" style="-fx-text-fill: #b00;" GridPane.rowIndex="6" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+</GridPane> 

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.example.libraryclient.AuthorsController" spacing="10" alignment="TOP_CENTER" style="-fx-padding: 15;">
+    <Label text="Список авторов" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    <TableView fx:id="authorTable" prefHeight="250" prefWidth="400">
+        <columns>
+            <TableColumn fx:id="nameCol" text="Имя" prefWidth="220"/>
+            <TableColumn fx:id="birthYearCol" text="Год рождения" prefWidth="120"/>
+        </columns>
+    </TableView>
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="addBtn" text="Добавить"/>
+        <Button fx:id="editBtn" text="Редактировать"/>
+        <Button fx:id="deleteBtn" text="Удалить"/>
+        <Button fx:id="refreshBtn" text="Обновить"/>
+        <Button fx:id="closeBtn" text="Закрыть"/>
+    </HBox>
+    <Label fx:id="statusLabel" text="" style="-fx-text-fill: #b00;"/>
+</VBox> 
