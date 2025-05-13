@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" fx:controller="ru.example.libraryclient.controller.BookLoanFormController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Книга:"/>
+    <ComboBox fx:id="bookComboBox" prefWidth="Infinity"/>
+
+    <Label text="Читатель:"/>
+    <ComboBox fx:id="readerComboBox" prefWidth="Infinity"/>
+
+    <Label text="Срок возврата:"/>
+    <DatePicker fx:id="dueDatePicker"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Выдать книгу" onAction="#handleSave"/>
+        <Button text="Отмена" onAction="#handleCancel"/>
+    </HBox>
+</VBox> 

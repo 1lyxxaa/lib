@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="ru.example.libraryclient.BooksController" spacing="10">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Фильтры:"/>
+        <TextField fx:id="filterTitleField" promptText="По названию"/>
+        <TextField fx:id="filterGenreField" promptText="По жанру"/>
+        <TextField fx:id="filterAuthorField" promptText="По автору"/>
+        <TextField fx:id="filterYearField" promptText="По году"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button fx:id="addBtn" text="Добавить"/>
+        <Button fx:id="editBtn" text="Редактировать"/>
+        <Button fx:id="deleteBtn" text="Удалить"/>
+        <Button fx:id="refreshBtn" text="Обновить"/>
+    </HBox>
+
+    <TableView fx:id="bookTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="titleCol" text="Название" prefWidth="200"/>
+            <TableColumn fx:id="yearCol" text="Год" prefWidth="100"/>
+            <TableColumn fx:id="genreCol" text="Жанр" prefWidth="150"/>
+            <TableColumn fx:id="pagesCol" text="Страницы" prefWidth="100"/>
+            <TableColumn fx:id="authorCol" text="Автор" prefWidth="200"/>
+            <TableColumn fx:id="statusCol" text="Статус" prefWidth="120"/>
+        </columns>
+    </TableView>
+
+    <Label fx:id="statusLabel" text=""/>
+</VBox> 

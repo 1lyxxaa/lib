@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" fx:controller="ru.example.libraryclient.controller.ReadersController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button text="Добавить читателя" onAction="#handleAddReader"/>
+        <Button text="Редактировать" onAction="#handleEditReader" fx:id="editButton"/>
+        <Button text="Удалить" onAction="#handleDeleteReader" fx:id="deleteButton"/>
+    </HBox>
+
+    <Label fx:id="statusLabel" text="" style="-fx-text-fill: #b00;"/>
+
+    <TableView fx:id="readersTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn text="ID" fx:id="idColumn" prefWidth="50"/>
+            <TableColumn text="ФИО" fx:id="fullNameColumn" prefWidth="200"/>
+            <TableColumn text="Телефон" fx:id="phoneColumn" prefWidth="150"/>
+            <TableColumn text="Email" fx:id="emailColumn" prefWidth="200"/>
+        </columns>
+    </TableView>
+</VBox> 

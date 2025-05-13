@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" fx:controller="ru.example.libraryclient.controller.BookLoansController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button text="Выдать книгу" onAction="#handleAddBookLoan"/>
+        <Button text="Вернуть книгу" onAction="#handleReturnBook" fx:id="returnButton"/>
+        <Button text="Все выдачи" fx:id="showAllButton"/>
+        <Button text="Просроченные" fx:id="showOverdueButton"/>
+    </HBox>
+
+    <TableView fx:id="bookLoansTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn text="ID" fx:id="idColumn" prefWidth="50"/>
+            <TableColumn text="Книга" fx:id="bookColumn" prefWidth="200"/>
+            <TableColumn text="Читатель" fx:id="readerColumn" prefWidth="200"/>
+            <TableColumn text="Дата выдачи" fx:id="loanDateColumn" prefWidth="100"/>
+            <TableColumn text="Срок возврата" fx:id="dueDateColumn" prefWidth="100"/>
+            <TableColumn text="Дата возврата" fx:id="returnDateColumn" prefWidth="100"/>
+            <TableColumn text="Просрочено" fx:id="overdueColumn" prefWidth="100"/>
+        </columns>
+    </TableView>
+</VBox> 
