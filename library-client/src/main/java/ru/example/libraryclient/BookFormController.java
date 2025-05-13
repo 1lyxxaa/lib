@@ -7,6 +7,9 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
+import ru.example.libraryclient.Book;
+import ru.example.libraryclient.Author;
+
 /**
  * Контроллер для формы добавления/редактирования книги.
  * Управляет процессом создания и обновления информации о книгах.
@@ -115,6 +118,9 @@ public class BookFormController {
         newBook.setGenre(genre);
         newBook.setPages(pages);
         newBook.setAuthor(author);
+        if (!isEdit) {
+            newBook.setAvailable(true);
+        }
         new Thread(() -> {
             try {
                 if (isEdit) {

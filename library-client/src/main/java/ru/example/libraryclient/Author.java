@@ -1,9 +1,12 @@
 package ru.example.libraryclient;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Класс, представляющий автора в клиентском приложении.
  * Содержит информацию о имени и годе рождения автора.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Author {
     private Long id;
     private String name;

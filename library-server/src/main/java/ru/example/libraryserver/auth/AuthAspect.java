@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestHeader;
+import ru.example.libraryserver.model.User;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
@@ -33,7 +34,9 @@ public class AuthAspect {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         RequireRole requireRole = method.getAnnotation(RequireRole.class);
-        String required = requireRole.value();
+        String[] required = requireRole.value();
+        System.out.println("Required roles: " + String.join(", ", required));
+        
         // Найти токен среди аргументов
         String token = null;
         Object[] args = joinPoint.getArgs();
@@ -48,6 +51,8 @@ public class AuthAspect {
                 }
             }
         }
+        System.out.println("Token: " + token);
+        
         if (token == null) {
             return ResponseEntity.status(401).body("Missing token");
         }
@@ -55,7 +60,17 @@ public class AuthAspect {
         if (user == null) {
             return ResponseEntity.status(401).body("Unauthorized");
         }
-        if (!user.getRole().equals(required) && !user.getRole().equals("ADMIN")) {
+        System.out.println("User role: " + user.getRole());
+        
+        boolean hasRole = false;
+        for (String role : required) {
+            System.out.println("Checking role: " + role);
+            if (user.getRole().equals(role) || user.getRole().equals("ADMIN")) {
+                hasRole = true;
+                break;
+            }
+        }
+        if (!hasRole) {
             return ResponseEntity.status(403).body("Forbidden");
         }
         return joinPoint.proceed();

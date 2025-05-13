@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import jakarta.annotation.PostConstruct;
+import ru.example.libraryserver.repository.UserRepository;
+import ru.example.libraryserver.model.User;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +29,11 @@ public class AuthService {
     public void initAdmin() {
         if (userRepository.findByUsername("admin").isEmpty()) {
             String hash = BCrypt.hashpw("12345", BCrypt.gensalt());
-            User admin = new User("admin", hash, "ADMIN");
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setPassword(hash);
+            admin.setRole("ADMIN");
+            admin.setEmail("admin@admin.com");
             userRepository.save(admin);
         }
     }
@@ -44,7 +50,11 @@ public class AuthService {
             throw new RuntimeException("Пользователь уже существует");
         }
         String hash = BCrypt.hashpw(password, BCrypt.gensalt());
-        User user = new User(username, hash, "USER");
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(hash);
+        user.setRole("READER");
+        user.setEmail(username + "@mail.com");
         userRepository.save(user);
         return login(username, password);
     }
@@ -59,7 +69,7 @@ public class AuthService {
     public String login(String username, String password) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
-        if (!BCrypt.checkpw(password, user.getPasswordHash())) {
+        if (!BCrypt.checkpw(password, user.getPassword())) {
             throw new RuntimeException("Неверный пароль");
         }
         String token = UUID.randomUUID().toString();

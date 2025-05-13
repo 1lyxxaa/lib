@@ -7,6 +7,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.event.ActionEvent;
+import ru.example.libraryclient.controller.MainController;
+import ru.example.libraryclient.service.*;
+import org.springframework.web.client.RestTemplate;
+import ru.example.libraryclient.model.User;
 
 /**
  * Контроллер для окна входа в систему.
@@ -46,6 +50,7 @@ public class LoginController {
                 var result = apiService.login(username, password);
                 String token = result.token;
                 String role = result.role;
+                apiService.setToken(token);
                 javafx.application.Platform.runLater(() -> openMainWindow(token, role));
             } catch (Exception ex) {
                 javafx.application.Platform.runLater(() -> errorLabel.setText("Ошибка входа: " + ex.getMessage()));
@@ -72,6 +77,7 @@ public class LoginController {
                 var result = apiService.register(username, password);
                 String token = result.token;
                 String role = result.role;
+                apiService.setToken(token);
                 javafx.application.Platform.runLater(() -> openMainWindow(token, role));
             } catch (Exception ex) {
                 javafx.application.Platform.runLater(() -> errorLabel.setText("Ошибка регистрации: " + ex.getMessage()));
@@ -87,10 +93,34 @@ public class LoginController {
      */
     private void openMainWindow(String token, String role) {
         try {
+            // Инициализация сервисов
+            RestTemplate restTemplate = new RestTemplate();
+            String baseUrl = "http://localhost:8080";
+            
+            BookService bookService = new BookService(restTemplate, baseUrl);
+            AuthorService authorService = new AuthorService(restTemplate, baseUrl);
+            ReaderService readerService = new ReaderService(restTemplate, baseUrl);
+            BookLoanService bookLoanService = new BookLoanService(restTemplate, baseUrl);
+            
+            // Установка токена для всех сервисов
+            bookService.setAuthToken(token);
+            authorService.setAuthToken(token);
+            readerService.setAuthToken(token);
+            bookLoanService.setAuthToken(token);
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ru/example/libraryclient/main.fxml"));
             Parent root = loader.load();
             MainController controller = loader.getController();
+            
+            // Получаем пользователя с сервера по username
+            String username = usernameField.getText().trim();
+            User user = apiService.getUserByUsername(username);
+            // Передача сервисов и пользователя в контроллер
+            controller.setServices(bookService, authorService, readerService, bookLoanService);
+            controller.setApiService(apiService);
+            controller.setCurrentUser(user);
             controller.setAuth(token, role);
+            
             Stage stage = new Stage();
             stage.setTitle("Библиотека - клиент");
             stage.setScene(new Scene(root, 800, 500));

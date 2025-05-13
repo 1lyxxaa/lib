@@ -15,6 +15,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import ru.example.libraryclient.Book;
+
 /**
  * Контроллер для управления списком книг.
  * Предоставляет функциональность для просмотра, добавления, редактирования и удаления книг,

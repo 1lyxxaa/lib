@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
  * Класс, представляющий книгу в библиотеке.
@@ -29,9 +31,15 @@ public class Book {
     @NotNull(message = "Количество страниц обязательно")
     private Integer pages;
 
+    private Boolean available = true;
+
     @ManyToOne
     @JoinColumn(name = "author_id")
     private Author author;
+
+    @OneToMany(mappedBy = "book")
+    @JsonManagedReference("book-bookloan")
+    private List<BookLoan> bookLoans;
 
     // Геттеры и сеттеры
     public Long getId() { return id; }
@@ -51,4 +59,10 @@ public class Book {
 
     public Author getAuthor() { return author; }
     public void setAuthor(Author author) { this.author = author; }
+
+    public List<BookLoan> getBookLoans() { return bookLoans; }
+    public void setBookLoans(List<BookLoan> bookLoans) { this.bookLoans = bookLoans; }
+
+    public Boolean getAvailable() { return available; }
+    public void setAvailable(Boolean available) { this.available = available; }
 } 

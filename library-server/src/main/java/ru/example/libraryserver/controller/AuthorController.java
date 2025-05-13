@@ -28,7 +28,7 @@ public class AuthorController {
      * @return список авторов
      */
     @GetMapping
-    @RequireRole("USER")
+    @RequireRole({"USER", "ADMIN"})
     public List<Author> getAllAuthors(@RequestHeader("X-Auth-Token") String token) {
         return authorRepository.findAll();
     }

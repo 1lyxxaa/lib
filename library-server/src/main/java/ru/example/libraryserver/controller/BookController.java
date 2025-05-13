@@ -10,6 +10,8 @@ import ru.example.libraryserver.repository.AuthorRepository;
 import jakarta.validation.Valid;
 import ru.example.libraryserver.auth.RequireRole;
 import org.springframework.web.bind.annotation.RequestHeader;
+import ru.example.libraryserver.dto.BookDto;
+import java.util.stream.Collectors;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,8 +35,18 @@ public class BookController {
      */
     @GetMapping
     @RequireRole("USER")
-    public List<Book> getAllBooks(@RequestHeader("X-Auth-Token") String token) {
-        return bookRepository.findAll();
+    public List<BookDto> getAllBooks(@RequestHeader("X-Auth-Token") String token) {
+        return bookRepository.findAll().stream()
+            .map(book -> new BookDto(
+                book.getId(),
+                book.getTitle(),
+                book.getGenre(),
+                book.getYear(),
+                book.getPages(),
+                book.getAvailable(),
+                book.getAuthor() != null ? book.getAuthor().getName() : null
+            ))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -68,6 +80,7 @@ public class BookController {
                 return ResponseEntity.badRequest().build();
             }
         }
+        book.setAvailable(true); // Всегда делаем книгу доступной при создании
         return ResponseEntity.ok(bookRepository.save(book));
     }
 

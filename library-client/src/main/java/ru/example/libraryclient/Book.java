@@ -1,9 +1,12 @@
 package ru.example.libraryclient;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Класс, представляющий книгу в клиентском приложении.
  * Содержит информацию о названии, годе издания, жанре, количестве страниц и авторе книги.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Book {
     private Long id;
     private String title;
@@ -11,6 +14,7 @@ public class Book {
     private String genre;
     private Integer pages;
     private Author author;
+    private Boolean available;
 
     public Book() {}
 
@@ -31,6 +35,14 @@ public class Book {
 
     public Author getAuthor() { return author; }
     public void setAuthor(Author author) { this.author = author; }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
 
     @Override
     public String toString() {

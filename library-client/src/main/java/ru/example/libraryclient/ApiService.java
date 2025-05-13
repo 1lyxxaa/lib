@@ -5,6 +5,9 @@ import java.net.URI;
 import java.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import ru.example.libraryclient.Book;
+import ru.example.libraryclient.model.User;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
  * Сервис для взаимодействия с API сервера библиотеки.
@@ -13,7 +16,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 public class ApiService {
     private static final String BASE_URL = "http://localhost:8080/api";
     private final HttpClient client = HttpClient.newHttpClient();
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private String token;
 
     public ApiService() {}
@@ -249,5 +252,20 @@ public class ApiService {
         result.token = token;
         result.role = role;
         return result;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+        System.out.println("[DEBUG] X-Auth-Token: " + token);
+    }
+
+    public User getUserByUsername(String username) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(BASE_URL + "/users/by-username/" + username))
+            .header("X-Auth-Token", token)
+            .GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200) throw new RuntimeException("Не удалось получить пользователя: " + response.body());
+        return mapper.readValue(response.body(), User.class);
     }
 } 
