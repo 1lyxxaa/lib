@@ -7,7 +7,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ru.example.libraryclient.model.Reader;
+import ru.example.libraryclient.dto.ReaderDto;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ReaderService {
     private final RestTemplate restTemplate;
@@ -33,46 +35,50 @@ public class ReaderService {
 
     public List<Reader> getAllReaders() {
         HttpEntity<?> entity = new HttpEntity<>(createHeaders());
-        ResponseEntity<List<Reader>> response = restTemplate.exchange(
+        ResponseEntity<List<ReaderDto>> response = restTemplate.exchange(
             baseUrl + "/api/readers",
             HttpMethod.GET,
             entity,
-            new ParameterizedTypeReference<List<Reader>>() {}
+            new ParameterizedTypeReference<List<ReaderDto>>() {}
         );
-        return response.getBody();
+        return response.getBody().stream()
+            .map(this::convertToReader)
+            .collect(Collectors.toList());
     }
 
     public Reader getReaderById(Long id) {
         HttpEntity<?> entity = new HttpEntity<>(createHeaders());
-        ResponseEntity<Reader> response = restTemplate.exchange(
+        ResponseEntity<ReaderDto> response = restTemplate.exchange(
             baseUrl + "/api/readers/" + id,
             HttpMethod.GET,
             entity,
-            Reader.class
+            ReaderDto.class
         );
-        return response.getBody();
+        return convertToReader(response.getBody());
     }
 
     public Reader createReader(Reader reader) {
-        HttpEntity<Reader> entity = new HttpEntity<>(reader, createHeaders());
-        ResponseEntity<Reader> response = restTemplate.exchange(
+        ReaderDto dto = convertToDto(reader);
+        HttpEntity<ReaderDto> entity = new HttpEntity<>(dto, createHeaders());
+        ResponseEntity<ReaderDto> response = restTemplate.exchange(
             baseUrl + "/api/readers",
             HttpMethod.POST,
             entity,
-            Reader.class
+            ReaderDto.class
         );
-        return response.getBody();
+        return convertToReader(response.getBody());
     }
 
     public Reader updateReader(Reader reader) {
-        HttpEntity<Reader> entity = new HttpEntity<>(reader, createHeaders());
-        ResponseEntity<Reader> response = restTemplate.exchange(
+        ReaderDto dto = convertToDto(reader);
+        HttpEntity<ReaderDto> entity = new HttpEntity<>(dto, createHeaders());
+        ResponseEntity<ReaderDto> response = restTemplate.exchange(
             baseUrl + "/api/readers/" + reader.getId(),
             HttpMethod.PUT,
             entity,
-            Reader.class
+            ReaderDto.class
         );
-        return response.getBody();
+        return convertToReader(response.getBody());
     }
 
     public void deleteReader(Long id) {
@@ -82,6 +88,24 @@ public class ReaderService {
             HttpMethod.DELETE,
             entity,
             Void.class
+        );
+    }
+
+    private ReaderDto convertToDto(Reader reader) {
+        return new ReaderDto(
+            reader.getId(),
+            reader.getFullName(),
+            reader.getPhone(),
+            reader.getEmail()
+        );
+    }
+
+    private Reader convertToReader(ReaderDto dto) {
+        return new Reader(
+            dto.getId(),
+            dto.getFullName(),
+            dto.getPhone(),
+            dto.getEmail()
         );
     }
 } 

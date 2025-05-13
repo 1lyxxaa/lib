@@ -1,7 +1,9 @@
 package ru.example.libraryclient.model;
 
 import javafx.beans.property.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Reader {
     private final LongProperty id;
     private final StringProperty fullName;

@@ -5,7 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.example.libraryserver.model.Reader;
 import ru.example.libraryserver.service.ReaderService;
+import ru.example.libraryserver.dto.ReaderDto;
+import ru.example.libraryserver.mapper.ReaderMapper;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/readers")
@@ -19,23 +22,29 @@ public class ReaderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Reader>> getAllReaders() {
-        return ResponseEntity.ok(readerService.getAllReaders());
+    public ResponseEntity<List<ReaderDto>> getAllReaders() {
+        List<ReaderDto> dtos = readerService.getAllReaders().stream()
+            .map(ReaderMapper::toDto)
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Reader> getReaderById(@PathVariable Long id) {
-        return ResponseEntity.ok(readerService.getReaderById(id));
+    public ResponseEntity<ReaderDto> getReaderById(@PathVariable Long id) {
+        Reader reader = readerService.getReaderById(id);
+        return ResponseEntity.ok(ReaderMapper.toDto(reader));
     }
 
     @PostMapping
-    public ResponseEntity<Reader> createReader(@RequestBody Reader reader) {
-        return ResponseEntity.ok(readerService.createReader(reader));
+    public ResponseEntity<ReaderDto> createReader(@RequestBody Reader reader) {
+        Reader created = readerService.createReader(reader);
+        return ResponseEntity.ok(ReaderMapper.toDto(created));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Reader> updateReader(@PathVariable Long id, @RequestBody Reader reader) {
-        return ResponseEntity.ok(readerService.updateReader(id, reader));
+    public ResponseEntity<ReaderDto> updateReader(@PathVariable Long id, @RequestBody Reader reader) {
+        Reader updated = readerService.updateReader(id, reader);
+        return ResponseEntity.ok(ReaderMapper.toDto(updated));
     }
 
     @DeleteMapping("/{id}")
