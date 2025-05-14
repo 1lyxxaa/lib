@@ -122,6 +122,7 @@ public class LoginController {
             controller.setApiService(apiService);
             controller.setCurrentUser(user);
             controller.setAuth(token, role);
+            controller.setAuthToken(token);
             
             Stage stage = new Stage();
             stage.setTitle("Библиотека - клиент");

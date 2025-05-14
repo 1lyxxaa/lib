@@ -6,8 +6,8 @@
         <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8;">
             <Button text="Книги" onAction="#handleShowBooks"/>
             <Button text="Авторы" onAction="#handleShowAuthors"/>
-            <Button text="Читатели" onAction="#handleShowReaders"/>
-            <Button text="Выдача книг" onAction="#handleShowBookLoans"/>
+            <Button fx:id="readersBtn" text="Читатели" onAction="#handleShowReaders"/>
+            <Button fx:id="bookLoansBtn" text="Выдача книг" onAction="#handleShowBookLoans"/>
             <Button fx:id="usersBtn" text="Пользователи" onAction="#handleShowUsers" visible="false"/>
             <Button text="О программе" onAction="#handleAbout"/>
             <Button text="Сменить пароль" onAction="#handleChangePassword"/>

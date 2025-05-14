@@ -122,14 +122,13 @@ public class BookLoansController {
     }
 
     private void updateButtonsVisibility() {
-        boolean isAdmin = currentUser != null && "ADMIN".equals(currentUser.getRole());
+        boolean isAdminOrLibrarian = currentUser != null && ("ADMIN".equals(currentUser.getRole()) || "LIBRARIAN".equals(currentUser.getRole()));
         BookLoanDto selected = bookLoansTable.getSelectionModel().getSelectedItem();
-        
         if (addBookLoanButton != null) {
-            addBookLoanButton.setDisable(!isAdmin);
+            addBookLoanButton.setDisable(!isAdminOrLibrarian);
         }
         if (returnButton != null) {
-            returnButton.setDisable(!isAdmin || selected == null || selected.getReturnDate() != null);
+            returnButton.setDisable(!isAdminOrLibrarian || selected == null || selected.getReturnDate() != null);
         }
     }
 

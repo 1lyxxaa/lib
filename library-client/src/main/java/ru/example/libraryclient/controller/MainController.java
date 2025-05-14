@@ -35,6 +35,8 @@ public class MainController {
 
     @FXML private StackPane contentArea;
     @FXML private Button usersBtn;
+    @FXML private Button readersBtn;
+    @FXML private Button bookLoansBtn;
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -53,6 +55,7 @@ public class MainController {
         if (usersBtn != null) {
             usersBtn.setVisible(user != null && "ADMIN".equals(user.getRole()));
         }
+        updateMenuButtonsByRole();
     }
 
     public void setApiService(ApiService apiService) {
@@ -67,6 +70,15 @@ public class MainController {
         if (usersBtn != null) {
             usersBtn.setVisible("ADMIN".equals(role));
         }
+        updateMenuButtonsByRole();
+    }
+
+    public void setAuthToken(String token) {
+        if (bookLoanService != null) bookLoanService.setAuthToken(token);
+        if (bookService != null) bookService.setAuthToken(token);
+        if (authorService != null) authorService.setAuthToken(token);
+        if (readerService != null) readerService.setAuthToken(token);
+        if (userService != null) userService.setAuthToken(token);
     }
 
     @FXML
@@ -74,6 +86,14 @@ public class MainController {
         if (usersBtn != null) {
             usersBtn.setVisible(currentUser != null && "ADMIN".equals(currentUser.getRole()));
         }
+        updateMenuButtonsByRole();
+    }
+
+    private void updateMenuButtonsByRole() {
+        String role = currentUser != null ? currentUser.getRole() : null;
+        boolean isUser = "USER".equals(role);
+        if (readersBtn != null) readersBtn.setDisable(isUser);
+        if (bookLoansBtn != null) bookLoansBtn.setDisable(isUser);
     }
 
     // Здесь могут быть методы для загрузки разных экранов (книги, авторы, читатели, выдачи и т.д.)
@@ -339,7 +359,13 @@ public class MainController {
 
     @FXML
     private void handleChangePassword() {
-        if (currentUser == null) return;
+        System.out.println("[DEBUG] handleChangePassword вызван");
+        if (currentUser == null) {
+            System.out.println("[DEBUG] currentUser == null");
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Ошибка: пользователь не определён", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Сменить пароль");
         dialog.setHeaderText("Введите текущий и новый пароль");
@@ -371,50 +397,48 @@ public class MainController {
         
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == okButtonType) {
-                String oldPassword = oldPasswordField.getText();
-                String newPassword = newPasswordField.getText();
-                String confirmPassword = confirmField.getText();
-                
-                if (oldPassword.isEmpty()) {
-                    errorLabel.setText("Введите текущий пароль");
-                    return null;
-                }
-                
-                if (newPassword.isEmpty()) {
-                    errorLabel.setText("Введите новый пароль");
-                    return null;
-                }
-                
-                if (!newPassword.equals(confirmPassword)) {
-                    errorLabel.setText("Новые пароли не совпадают");
-                    return null;
-                }
-                
-                if (newPassword.length() < 6) {
-                    errorLabel.setText("Новый пароль должен быть не менее 6 символов");
-                    return null;
-                }
-                
-                return newPassword;
+                return "OK";
             }
             return null;
         });
-        
-        dialog.showAndWait().ifPresent(newPassword -> {
-            System.out.println("[DEBUG] Начало смены пароля");
+
+        // Обработка кнопки OK вручную
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(okButtonType);
+        okButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            String oldPassword = oldPasswordField.getText();
+            String newPassword = newPasswordField.getText();
+            String confirmPassword = confirmField.getText();
+            if (oldPassword.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Введите текущий пароль", ButtonType.OK);
+                alert.showAndWait();
+                event.consume();
+                return;
+            }
+            if (newPassword.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Введите новый пароль", ButtonType.OK);
+                alert.showAndWait();
+                event.consume();
+                return;
+            }
+            if (!newPassword.equals(confirmPassword)) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Новые пароли не совпадают", ButtonType.OK);
+                alert.showAndWait();
+                event.consume();
+                return;
+            }
+        });
+
+        dialog.showAndWait().ifPresent(result -> {
+            String oldPassword = oldPasswordField.getText();
+            String newPassword = newPasswordField.getText();
             try {
                 Long userId = currentUser.getId();
-                System.out.println("[DEBUG] userId=" + userId);
-                String oldPass = oldPasswordField.getText();
-                System.out.println("[DEBUG] oldPasswordField.getText()=" + oldPass);
-                boolean valid = userService.verifyPassword(userId, oldPass);
-                System.out.println("[DEBUG] valid=" + valid);
+                boolean valid = userService.verifyPassword(userId, oldPassword);
                 if (!valid) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Неверный текущий пароль", ButtonType.OK);
                     alert.showAndWait();
                 } else {
                     userService.changePassword(userId, newPassword);
-                    System.out.println("[DEBUG] Пароль успешно изменён");
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "Пароль успешно изменён!", ButtonType.OK);
                     alert.showAndWait();
                 }

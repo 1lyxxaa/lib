@@ -50,6 +50,7 @@ public class BookLoanController {
     @PostMapping
     @RequireRole({"ADMIN", "LIBRARIAN"})
     public ResponseEntity<BookLoanDto> createBookLoan(
+            @RequestHeader("X-Auth-Token") String token,
             @RequestParam Long bookId,
             @RequestParam Long readerId,
             @RequestParam Long librarianId,
@@ -59,7 +60,9 @@ public class BookLoanController {
 
     @PutMapping("/{id}/return")
     @RequireRole({"ADMIN", "LIBRARIAN"})
-    public ResponseEntity<BookLoanDto> returnBook(@PathVariable Long id) {
+    public ResponseEntity<BookLoanDto> returnBook(
+            @RequestHeader("X-Auth-Token") String token,
+            @PathVariable Long id) {
         return ResponseEntity.ok(toDto(bookLoanService.returnBook(id)));
     }
 

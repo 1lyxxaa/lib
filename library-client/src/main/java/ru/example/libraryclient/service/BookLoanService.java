@@ -55,14 +55,17 @@ public class BookLoanService {
     }
 
     public BookLoanDto createBookLoan(Long bookId, Long readerId, Long librarianId, LocalDate dueDate) {
-        return restTemplate.postForObject(
-            baseUrl + "/api/book-loans?bookId=" + bookId + 
-            "&readerId=" + readerId + 
-            "&librarianId=" + librarianId + 
+        HttpEntity<?> entity = new HttpEntity<>(createHeaders());
+        ResponseEntity<BookLoanDto> response = restTemplate.exchange(
+            baseUrl + "/api/book-loans?bookId=" + bookId +
+            "&readerId=" + readerId +
+            "&librarianId=" + librarianId +
             "&dueDate=" + dueDate,
-            null,
+            HttpMethod.POST,
+            entity,
             BookLoanDto.class
         );
+        return response.getBody();
     }
 
     public BookLoanDto returnBook(Long id) {
