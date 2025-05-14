@@ -29,9 +29,10 @@ public class BooksController {
     @FXML private TableColumn<Book, String> genreCol;
     @FXML private TableColumn<Book, Integer> pagesCol;
     @FXML private TableColumn<Book, String> authorCol;
+    @FXML private TableColumn<Book, String> statusCol;
     @FXML private Button addBtn, editBtn, deleteBtn, refreshBtn;
     @FXML private Label statusLabel;
-    @FXML private TextField filterTitleField, filterGenreField, filterAuthorField, filterYearField;
+    @FXML private TextField searchField;
 
     private ApiService apiService;
     private final ObservableList<Book> books = FXCollections.observableArrayList();
@@ -66,9 +67,15 @@ public class BooksController {
         yearCol.setCellValueFactory(new PropertyValueFactory<>("year"));
         genreCol.setCellValueFactory(new PropertyValueFactory<>("genre"));
         pagesCol.setCellValueFactory(new PropertyValueFactory<>("pages"));
-        authorCol.setCellValueFactory(cellData -> {
-            Author a = cellData.getValue().getAuthor();
-            return new javafx.beans.property.SimpleStringProperty(a != null ? a.getName() : "");
+        authorCol.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleStringProperty(
+                cellData.getValue().getAuthorName() != null ? cellData.getValue().getAuthorName() : ""
+            )
+        );
+        statusCol.setCellValueFactory(cellData -> {
+            Boolean available = cellData.getValue().getAvailable();
+            String status = (available == null || available) ? "Доступна" : "Выдана";
+            return new javafx.beans.property.SimpleStringProperty(status);
         });
         bookTable.setItems(books);
         refreshBtn.setOnAction(e -> loadBooks());
@@ -78,10 +85,9 @@ public class BooksController {
             if (selected != null) openBookForm(selected);
         });
         deleteBtn.setOnAction(e -> deleteSelectedBook());
-        filterTitleField.textProperty().addListener((obs, oldVal, newVal) -> applyFiltersAndSort());
-        filterGenreField.textProperty().addListener((obs, oldVal, newVal) -> applyFiltersAndSort());
-        filterAuthorField.textProperty().addListener((obs, oldVal, newVal) -> applyFiltersAndSort());
-        filterYearField.textProperty().addListener((obs, oldVal, newVal) -> applyFiltersAndSort());
+        if (searchField != null) {
+            searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilter());
+        }
         bookTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> updateButtonsVisibility());
     }
 
@@ -95,29 +101,28 @@ public class BooksController {
             try {
                 var list = apiService.getBooks();
                 allBooks = new ArrayList<>(list);
-                javafx.application.Platform.runLater(this::applyFiltersAndSort);
+                javafx.application.Platform.runLater(this::applyFilter);
             } catch (Exception ex) {
                 javafx.application.Platform.runLater(() -> statusLabel.setText("Ошибка загрузки книг: " + ex.getMessage()));
             }
         }).start();
     }
 
-    /**
-     * Применяет фильтры и сортировку к списку книг.
-     */
-    private void applyFiltersAndSort() {
-        String title = filterTitleField.getText().trim().toLowerCase();
-        String genre = filterGenreField.getText().trim().toLowerCase();
-        String author = filterAuthorField.getText().trim().toLowerCase();
-        String yearStr = filterYearField.getText().trim();
-        List<Book> filtered = allBooks.stream()
-                .filter(b -> title.isEmpty() || b.getTitle().toLowerCase().contains(title))
-                .filter(b -> genre.isEmpty() || b.getGenre().toLowerCase().contains(genre))
-                .filter(b -> author.isEmpty() || (b.getAuthor() != null && b.getAuthor().getName().toLowerCase().contains(author)))
-                .filter(b -> yearStr.isEmpty() || (b.getYear() != null && b.getYear().toString().contains(yearStr)))
-                .collect(Collectors.toList());
-        filtered.sort(Comparator.comparing(Book::getTitle, Comparator.nullsLast(String::compareTo)));
-        books.setAll(filtered);
+    private void applyFilter() {
+        if (searchField == null) return;
+        String filter = searchField.getText().trim().toLowerCase();
+        if (filter.isEmpty()) {
+            books.setAll(allBooks);
+        } else {
+            books.setAll(allBooks.stream().filter(b ->
+                (b.getTitle() != null && b.getTitle().toLowerCase().contains(filter)) ||
+                (b.getAuthorName() != null && b.getAuthorName().toLowerCase().contains(filter)) ||
+                (b.getGenre() != null && b.getGenre().toLowerCase().contains(filter)) ||
+                (b.getYear() != null && b.getYear().toString().contains(filter)) ||
+                (b.getPages() != null && b.getPages().toString().contains(filter)) ||
+                (b.getAvailable() != null && ((b.getAvailable() ? "доступна" : "выдана").contains(filter)))
+            ).toList());
+        }
     }
 
     /**

@@ -39,4 +39,12 @@ public class User {
 
     public List<BookLoan> getBookLoans() { return bookLoans; }
     public void setBookLoans(List<BookLoan> bookLoans) { this.bookLoans = bookLoans; }
+
+    public void setPasswordHash(String passwordHash) {
+        this.password = passwordHash;
+    }
+
+    public String getPasswordHash() {
+        return password;
+    }
 } 

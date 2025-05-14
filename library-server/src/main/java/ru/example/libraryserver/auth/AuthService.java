@@ -53,7 +53,28 @@ public class AuthService {
         User user = new User();
         user.setUsername(username);
         user.setPassword(hash);
-        user.setRole("READER");
+        user.setRole("USER");
+        user.setEmail(username + "@mail.com");
+        userRepository.save(user);
+        return login(username, password);
+    }
+
+    /**
+     * Регистрирует нового библиотекаря.
+     * @param username логин пользователя
+     * @param password пароль пользователя
+     * @return токен авторизации
+     * @throws RuntimeException если пользователь уже существует
+     */
+    public String registerLibrarian(String username, String password) {
+        if (userRepository.findByUsername(username).isPresent()) {
+            throw new RuntimeException("Пользователь уже существует");
+        }
+        String hash = BCrypt.hashpw(password, BCrypt.gensalt());
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(hash);
+        user.setRole("LIBRARIAN");
         user.setEmail(username + "@mail.com");
         userRepository.save(user);
         return login(username, password);

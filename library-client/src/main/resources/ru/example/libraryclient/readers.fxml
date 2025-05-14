@@ -15,6 +15,11 @@
         <Button text="Удалить" onAction="#handleDeleteReader" fx:id="deleteButton"/>
     </HBox>
 
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Поиск:"/>
+        <TextField fx:id="searchField" promptText="ФИО, телефон или email..." />
+    </HBox>
+
     <Label fx:id="statusLabel" text="" style="-fx-text-fill: #b00;"/>
 
     <TableView fx:id="readersTable" VBox.vgrow="ALWAYS">

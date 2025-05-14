@@ -3,6 +3,10 @@
 <?import javafx.scene.layout.*?>
 <VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.example.libraryclient.AuthorsController" spacing="10" alignment="TOP_CENTER" style="-fx-padding: 15;">
     <Label text="Список авторов" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Поиск:"/>
+        <TextField fx:id="searchField" promptText="Введите имя или год рождения автора..." />
+    </HBox>
     <TableView fx:id="authorTable" prefHeight="250" prefWidth="400">
         <columns>
             <TableColumn fx:id="nameCol" text="Имя" prefWidth="220"/>

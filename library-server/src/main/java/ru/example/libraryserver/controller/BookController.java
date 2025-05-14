@@ -34,7 +34,7 @@ public class BookController {
      * @return список книг
      */
     @GetMapping
-    @RequireRole("USER")
+    @RequireRole({"ADMIN", "LIBRARIAN", "USER"})
     public List<BookDto> getAllBooks(@RequestHeader("X-Auth-Token") String token) {
         return bookRepository.findAll().stream()
             .map(book -> new BookDto(
@@ -141,7 +141,7 @@ public class BookController {
      * @return список книг, соответствующих критериям поиска
      */
     @GetMapping("/search")
-    @RequireRole("USER")
+    @RequireRole({"ADMIN", "LIBRARIAN", "USER"})
     public List<Book> searchBooks(@RequestHeader("X-Auth-Token") String token,
             @RequestParam(required = false) String genre,
             @RequestParam(required = false) String title,

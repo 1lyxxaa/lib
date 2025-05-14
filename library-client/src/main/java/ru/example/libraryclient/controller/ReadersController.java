@@ -24,9 +24,13 @@ public class ReadersController {
     @FXML private Button editButton;
     @FXML private Button deleteButton;
     @FXML private Label statusLabel;
+    @FXML private TextField searchField;
+    @FXML private Button addButton;
+    private String role;
 
     private ReaderService readerService;
     private boolean initialized = false;
+    private java.util.List<Reader> allReaders = new java.util.ArrayList<>();
 
     @FXML
     private void initialize() {
@@ -45,6 +49,10 @@ public class ReadersController {
         // Отключаем кнопки при старте
         editButton.setDisable(true);
         deleteButton.setDisable(true);
+        
+        if (searchField != null) {
+            searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilter());
+        }
         
         initialized = true;
         
@@ -76,8 +84,9 @@ public class ReadersController {
         }
         
         try {
-            readersTable.getItems().clear();
-            readersTable.getItems().addAll(readerService.getAllReaders());
+            allReaders.clear();
+            allReaders.addAll(readerService.getAllReaders());
+            applyFilter();
             if (statusLabel != null) {
                 statusLabel.setText("");
             }
@@ -92,7 +101,9 @@ public class ReadersController {
 
     private void updateButtonsVisibility() {
         Reader selected = readersTable.getSelectionModel().getSelectedItem();
-        editButton.setDisable(selected == null);
+        if (!"USER".equals(role)) {
+            editButton.setDisable(selected == null);
+        }
         deleteButton.setDisable(selected == null);
     }
 
@@ -220,5 +231,26 @@ public class ReadersController {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void applyFilter() {
+        String filter = searchField.getText().trim().toLowerCase();
+        if (filter.isEmpty()) {
+            readersTable.getItems().setAll(allReaders);
+        } else {
+            readersTable.getItems().setAll(allReaders.stream().filter(r ->
+                (r.getFullName() != null && r.getFullName().toLowerCase().contains(filter)) ||
+                (r.getPhone() != null && r.getPhone().toLowerCase().contains(filter)) ||
+                (r.getEmail() != null && r.getEmail().toLowerCase().contains(filter))
+            ).toList());
+        }
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+        boolean canEdit = "ADMIN".equals(role) || "LIBRARIAN".equals(role);
+        if (addButton != null) addButton.setDisable(!canEdit);
+        if (editButton != null) editButton.setDisable(!canEdit);
+        if (deleteButton != null) deleteButton.setDisable(!canEdit);
     }
 } 

@@ -3,31 +3,16 @@
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="ru.example.libraryclient.controller.MainController">
     <top>
-        <MenuBar>
-            <Menu text="Файл">
-                <MenuItem text="Выход" onAction="#handleExit"/>
-            </Menu>
-            <Menu text="Книги">
-                <MenuItem text="Список книг" onAction="#handleShowBooks"/>
-                <MenuItem text="Добавить книгу" onAction="#handleAddBook"/>
-            </Menu>
-            <Menu text="Авторы">
-                <MenuItem text="Список авторов" onAction="#handleShowAuthors"/>
-                <MenuItem text="Добавить автора" onAction="#handleAddAuthor"/>
-            </Menu>
-            <Menu text="Читатели">
-                <MenuItem text="Список читателей" onAction="#handleShowReaders"/>
-                <MenuItem text="Добавить читателя" onAction="#handleAddReader"/>
-            </Menu>
-            <Menu text="Выдача книг">
-                <MenuItem text="Список выданных книг" onAction="#handleShowBookLoans"/>
-                <MenuItem text="Выдать книгу" onAction="#handleAddBookLoan"/>
-                <MenuItem text="Просроченные книги" onAction="#handleShowOverdue"/>
-            </Menu>
-            <Menu text="Помощь">
-                <MenuItem text="О программе" onAction="#handleAbout"/>
-            </Menu>
-        </MenuBar>
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 8;">
+            <Button text="Книги" onAction="#handleShowBooks"/>
+            <Button text="Авторы" onAction="#handleShowAuthors"/>
+            <Button text="Читатели" onAction="#handleShowReaders"/>
+            <Button text="Выдача книг" onAction="#handleShowBookLoans"/>
+            <Button fx:id="usersBtn" text="Пользователи" onAction="#handleShowUsers" visible="false"/>
+            <Button text="О программе" onAction="#handleAbout"/>
+            <Button text="Сменить пароль" onAction="#handleChangePassword"/>
+            <Button text="Выход" onAction="#handleExit"/>
+        </HBox>
     </top>
     <center>
         <StackPane fx:id="contentArea"/>

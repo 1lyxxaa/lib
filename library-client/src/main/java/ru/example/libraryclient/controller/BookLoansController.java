@@ -28,12 +28,16 @@ public class BookLoansController {
     @FXML private Button returnButton;
     @FXML private Button showAllButton;
     @FXML private Button showOverdueButton;
+    @FXML private Button addBookLoanButton;
+    @FXML private TextField searchField;
 
     private BookLoanService bookLoanService;
     private BookService bookService;
     private ReaderService readerService;
     private User currentUser;
     private Stage dialogStage;
+    private java.util.List<BookLoanDto> allLoans = new java.util.ArrayList<>();
+    private String role;
 
     @FXML
     private void initialize() {
@@ -57,6 +61,15 @@ public class BookLoansController {
                 (observable, oldValue, newValue) -> updateButtonsVisibility());
         showAllButton.setOnAction(e -> showAllLoans());
         showOverdueButton.setOnAction(e -> showOverdueLoans());
+        if (searchField != null) {
+            searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilter());
+        }
+        if ("USER".equals(role)) {
+            if (addBookLoanButton != null) addBookLoanButton.setDisable(true);
+            if (returnButton != null) returnButton.setDisable(true);
+            if (showAllButton != null) showAllButton.setDisable(true);
+            if (showOverdueButton != null) showOverdueButton.setDisable(true);
+        }
     }
 
     public void setServices(BookLoanService bookLoanService, BookService bookService, ReaderService readerService) {
@@ -68,25 +81,56 @@ public class BookLoansController {
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
+        updateButtonsVisibility();
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+        boolean canEdit = "ADMIN".equals(role) || "LIBRARIAN".equals(role);
+        if (addBookLoanButton != null) addBookLoanButton.setDisable(!canEdit);
+        if (returnButton != null) returnButton.setDisable(!canEdit);
+        if (showAllButton != null) showAllButton.setDisable(!canEdit);
+        if (showOverdueButton != null) showOverdueButton.setDisable(!canEdit);
+    }
+
+    private void applyFilter() {
+        String filter = searchField.getText().trim().toLowerCase();
+        if (filter.isEmpty()) {
+            bookLoansTable.getItems().setAll(allLoans);
+        } else {
+            bookLoansTable.getItems().setAll(allLoans.stream().filter(l ->
+                (l.getBookTitle() != null && l.getBookTitle().toLowerCase().contains(filter)) ||
+                (l.getReaderFullName() != null && l.getReaderFullName().toLowerCase().contains(filter))
+            ).toList());
+        }
     }
 
     private void showAllLoans() {
-        bookLoansTable.getItems().clear();
-        bookLoansTable.getItems().addAll(bookLoanService.getAllBookLoans());
+        allLoans.clear();
+        allLoans.addAll(bookLoanService.getAllBookLoans());
+        applyFilter();
         showAllButton.setDisable(true);
         showOverdueButton.setDisable(false);
     }
 
     private void showOverdueLoans() {
-        bookLoansTable.getItems().clear();
-        bookLoansTable.getItems().addAll(bookLoanService.getOverdueBookLoans());
+        allLoans.clear();
+        allLoans.addAll(bookLoanService.getOverdueBookLoans());
+        applyFilter();
         showAllButton.setDisable(false);
         showOverdueButton.setDisable(true);
     }
 
     private void updateButtonsVisibility() {
+        boolean isAdmin = currentUser != null && "ADMIN".equals(currentUser.getRole());
         BookLoanDto selected = bookLoansTable.getSelectionModel().getSelectedItem();
-        returnButton.setDisable(selected == null || selected.getReturnDate() != null);
+        
+        if (addBookLoanButton != null) {
+            addBookLoanButton.setDisable(!isAdmin);
+        }
+        if (returnButton != null) {
+            returnButton.setDisable(!isAdmin || selected == null || selected.getReturnDate() != null);
+        }
     }
 
     @FXML

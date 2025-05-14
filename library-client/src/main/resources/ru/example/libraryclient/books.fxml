@@ -10,11 +10,8 @@
     </padding>
 
     <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="Фильтры:"/>
-        <TextField fx:id="filterTitleField" promptText="По названию"/>
-        <TextField fx:id="filterGenreField" promptText="По жанру"/>
-        <TextField fx:id="filterAuthorField" promptText="По автору"/>
-        <TextField fx:id="filterYearField" promptText="По году"/>
+        <Label text="Поиск:"/>
+        <TextField fx:id="searchField" promptText="Название, автор, жанр, год, статус..." />
     </HBox>
 
     <HBox spacing="10" alignment="CENTER_LEFT">

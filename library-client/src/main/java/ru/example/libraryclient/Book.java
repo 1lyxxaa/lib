@@ -15,6 +15,7 @@ public class Book {
     private Integer pages;
     private Author author;
     private Boolean available;
+    private String authorName;
 
     public Book() {}
 
@@ -43,6 +44,9 @@ public class Book {
     public void setAvailable(Boolean available) {
         this.available = available;
     }
+
+    public String getAuthorName() { return authorName; }
+    public void setAuthorName(String authorName) { this.authorName = authorName; }
 
     @Override
     public String toString() {

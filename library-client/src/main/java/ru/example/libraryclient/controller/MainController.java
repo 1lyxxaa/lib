@@ -11,7 +11,17 @@ import ru.example.libraryclient.service.AuthorService;
 import ru.example.libraryclient.service.BookLoanService;
 import ru.example.libraryclient.service.BookService;
 import ru.example.libraryclient.service.ReaderService;
+import ru.example.libraryclient.service.UserService;
 import ru.example.libraryclient.ApiService;
+import javafx.scene.control.Button;
+import ru.example.libraryclient.UsersController;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.scene.control.Alert;
 
 public class MainController {
     private Stage primaryStage;
@@ -21,22 +31,28 @@ public class MainController {
     private BookLoanService bookLoanService;
     private User currentUser;
     private ApiService apiService;
+    private UserService userService;
 
     @FXML private StackPane contentArea;
+    @FXML private Button usersBtn;
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
-    public void setServices(BookService bookService, AuthorService authorService, ReaderService readerService, BookLoanService bookLoanService) {
+    public void setServices(BookService bookService, AuthorService authorService, ReaderService readerService, BookLoanService bookLoanService, UserService userService) {
         this.bookService = bookService;
         this.authorService = authorService;
         this.readerService = readerService;
         this.bookLoanService = bookLoanService;
+        this.userService = userService;
     }
 
     public void setCurrentUser(User user) {
         this.currentUser = user;
+        if (usersBtn != null) {
+            usersBtn.setVisible(user != null && "ADMIN".equals(user.getRole()));
+        }
     }
 
     public void setApiService(ApiService apiService) {
@@ -48,8 +64,16 @@ public class MainController {
             this.currentUser = new User();
         }
         this.currentUser.setRole(role);
-        // Если нужно, можно сохранить токен в поле
-        // this.token = token;
+        if (usersBtn != null) {
+            usersBtn.setVisible("ADMIN".equals(role));
+        }
+    }
+
+    @FXML
+    public void initialize() {
+        if (usersBtn != null) {
+            usersBtn.setVisible(currentUser != null && "ADMIN".equals(currentUser.getRole()));
+        }
     }
 
     // Здесь могут быть методы для загрузки разных экранов (книги, авторы, читатели, выдачи и т.д.)
@@ -73,9 +97,35 @@ public class MainController {
 
     @FXML
     private void handleExit() {
-        if (primaryStage != null) {
-            primaryStage.close();
-        } else {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ru/example/libraryclient/login.fxml"));
+            Parent loginView = loader.load();
+
+            Stage loginStage = new Stage();
+            loginStage.setTitle("Вход в систему");
+            loginStage.setScene(new Scene(loginView));
+            loginStage.show();
+
+            // Закрываем текущее главное окно
+            if (primaryStage != null) {
+                primaryStage.close();
+            } else {
+                // На всякий случай, если primaryStage не установлен
+                Stage stage = (Stage) contentArea.getScene().getWindow();
+                if (stage != null) {
+                    stage.close();
+                }
+            }
+
+            // Сбросить состояние пользователя и сервисов
+            this.currentUser = null;
+            this.apiService = null;
+            this.bookService = null;
+            this.authorService = null;
+            this.readerService = null;
+            this.bookLoanService = null;
+        } catch (Exception e) {
+            e.printStackTrace();
             System.exit(0);
         }
     }
@@ -107,9 +157,9 @@ public class MainController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ru/example/libraryclient/authors.fxml"));
             Parent authorsView = loader.load();
             Object controller = loader.getController();
-            // Если AuthorsController, передаем сервисы/ApiService/роль пользователя
+            // Если AuthorsController, передаем сервисы/роль пользователя
             if (controller instanceof ru.example.libraryclient.AuthorsController authorsController) {
-                if (apiService != null) authorsController.setApiService(apiService);
+                if (authorService != null) authorsController.setAuthorService(authorService);
                 if (currentUser != null) authorsController.setRole(currentUser.getRole());
             }
             contentArea.getChildren().setAll(authorsView);
@@ -125,7 +175,7 @@ public class MainController {
             Parent formView = loader.load();
             Object controller = loader.getController();
             if (controller instanceof ru.example.libraryclient.AuthorFormController authorFormController) {
-                if (apiService != null) authorFormController.setApiService(apiService);
+                if (authorService != null) authorFormController.setAuthorService(authorService);
                 // Можно добавить обработчик onSuccess для обновления списка авторов
             }
             Stage stage = new Stage();
@@ -144,17 +194,13 @@ public class MainController {
             System.err.println("Error: ReaderService is not initialized in MainController");
             return;
         }
-        
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ru/example/libraryclient/readers.fxml"));
             Parent readersView = loader.load();
-            
             ReadersController controller = loader.getController();
             if (controller != null) {
-                // Сначала устанавливаем сервис
                 controller.setReaderService(readerService);
-                
-                // Затем обновляем список читателей в отдельном потоке
+                if (currentUser != null) controller.setRole(currentUser.getRole());
                 javafx.application.Platform.runLater(() -> {
                     try {
                         controller.refreshReaders();
@@ -167,7 +213,6 @@ public class MainController {
                 System.err.println("Error: Could not get ReadersController");
                 return;
             }
-            
             contentArea.getChildren().setAll(readersView);
         } catch (Exception e) {
             System.err.println("Error showing readers view: " + e.getMessage());
@@ -214,6 +259,9 @@ public class MainController {
             if (controller instanceof ru.example.libraryclient.controller.BookLoansController bookLoansController) {
                 bookLoansController.setServices(bookLoanService, bookService, readerService);
                 bookLoansController.setCurrentUser(currentUser);
+                if (currentUser != null) {
+                    bookLoansController.setRole(currentUser.getRole());
+                }
             }
             contentArea.getChildren().setAll(loansView);
         } catch (Exception e) {
@@ -268,5 +316,113 @@ public class MainController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void handleShowUsers() {
+        if (currentUser == null || !"ADMIN".equals(currentUser.getRole())) {
+            System.err.println("Доступ к управлению пользователями только для ADMIN");
+            return;
+        }
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ru/example/libraryclient/users.fxml"));
+            Parent usersView = loader.load();
+            UsersController controller = loader.getController();
+            if (controller != null && userService != null) {
+                controller.setUserService(userService);
+            }
+            contentArea.getChildren().setAll(usersView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleChangePassword() {
+        if (currentUser == null) return;
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Сменить пароль");
+        dialog.setHeaderText("Введите текущий и новый пароль");
+        ButtonType okButtonType = new ButtonType("Сохранить", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+        
+        PasswordField oldPasswordField = new PasswordField();
+        oldPasswordField.setPromptText("Текущий пароль");
+        PasswordField newPasswordField = new PasswordField();
+        newPasswordField.setPromptText("Новый пароль");
+        PasswordField confirmField = new PasswordField();
+        confirmField.setPromptText("Повторите новый пароль");
+        
+        Label errorLabel = new Label();
+        errorLabel.setStyle("-fx-text-fill: red");
+        
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.add(new Label("Текущий пароль:"), 0, 0);
+        grid.add(oldPasswordField, 1, 0);
+        grid.add(new Label("Новый пароль:"), 0, 1);
+        grid.add(newPasswordField, 1, 1);
+        grid.add(new Label("Повторите новый пароль:"), 0, 2);
+        grid.add(confirmField, 1, 2);
+        grid.add(errorLabel, 0, 3, 2, 1);
+        
+        dialog.getDialogPane().setContent(grid);
+        
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == okButtonType) {
+                String oldPassword = oldPasswordField.getText();
+                String newPassword = newPasswordField.getText();
+                String confirmPassword = confirmField.getText();
+                
+                if (oldPassword.isEmpty()) {
+                    errorLabel.setText("Введите текущий пароль");
+                    return null;
+                }
+                
+                if (newPassword.isEmpty()) {
+                    errorLabel.setText("Введите новый пароль");
+                    return null;
+                }
+                
+                if (!newPassword.equals(confirmPassword)) {
+                    errorLabel.setText("Новые пароли не совпадают");
+                    return null;
+                }
+                
+                if (newPassword.length() < 6) {
+                    errorLabel.setText("Новый пароль должен быть не менее 6 символов");
+                    return null;
+                }
+                
+                return newPassword;
+            }
+            return null;
+        });
+        
+        dialog.showAndWait().ifPresent(newPassword -> {
+            System.out.println("[DEBUG] Начало смены пароля");
+            try {
+                Long userId = currentUser.getId();
+                System.out.println("[DEBUG] userId=" + userId);
+                String oldPass = oldPasswordField.getText();
+                System.out.println("[DEBUG] oldPasswordField.getText()=" + oldPass);
+                boolean valid = userService.verifyPassword(userId, oldPass);
+                System.out.println("[DEBUG] valid=" + valid);
+                if (!valid) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Неверный текущий пароль", ButtonType.OK);
+                    alert.showAndWait();
+                } else {
+                    userService.changePassword(userId, newPassword);
+                    System.out.println("[DEBUG] Пароль успешно изменён");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Пароль успешно изменён!", ButtonType.OK);
+                    alert.showAndWait();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Ошибка: " + ex.getMessage(), ButtonType.OK);
+                alert.showAndWait();
+            }
+        });
     }
 } 

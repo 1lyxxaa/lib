@@ -10,10 +10,15 @@
     </padding>
 
     <HBox spacing="10" alignment="CENTER_LEFT">
-        <Button text="Выдать книгу" onAction="#handleAddBookLoan"/>
+        <Button text="Выдать книгу" onAction="#handleAddBookLoan" fx:id="addBookLoanButton"/>
         <Button text="Вернуть книгу" onAction="#handleReturnBook" fx:id="returnButton"/>
         <Button text="Все выдачи" fx:id="showAllButton"/>
         <Button text="Просроченные" fx:id="showOverdueButton"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Поиск:"/>
+        <TextField fx:id="searchField" promptText="Книга или читатель..." />
     </HBox>
 
     <TableView fx:id="bookLoansTable" VBox.vgrow="ALWAYS">

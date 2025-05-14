@@ -37,6 +37,7 @@ public class LibraryApplication extends Application {
             AuthorService authorService = new AuthorService(restTemplate, baseUrl);
             ReaderService readerService = new ReaderService(restTemplate, baseUrl);
             BookLoanService bookLoanService = new BookLoanService(restTemplate, baseUrl);
+            UserService userService = new UserService(restTemplate, baseUrl);
 
             // Загрузка главного окна
             FXMLLoader loader = new FXMLLoader();
@@ -46,7 +47,7 @@ public class LibraryApplication extends Application {
             // Настройка главного контроллера
             MainController controller = loader.getController();
             controller.setPrimaryStage(primaryStage);
-            controller.setServices(bookService, authorService, readerService, bookLoanService);
+            controller.setServices(bookService, authorService, readerService, bookLoanService, userService);
 
             // Создание временного пользователя (в реальном приложении здесь должна быть авторизация)
             User currentUser = new User();

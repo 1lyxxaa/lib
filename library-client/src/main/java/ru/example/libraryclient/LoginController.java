@@ -101,12 +101,14 @@ public class LoginController {
             AuthorService authorService = new AuthorService(restTemplate, baseUrl);
             ReaderService readerService = new ReaderService(restTemplate, baseUrl);
             BookLoanService bookLoanService = new BookLoanService(restTemplate, baseUrl);
+            UserService userService = new UserService(restTemplate, baseUrl);
             
             // Установка токена для всех сервисов
             bookService.setAuthToken(token);
             authorService.setAuthToken(token);
             readerService.setAuthToken(token);
             bookLoanService.setAuthToken(token);
+            userService.setAuthToken(token);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ru/example/libraryclient/main.fxml"));
             Parent root = loader.load();
@@ -116,7 +118,7 @@ public class LoginController {
             String username = usernameField.getText().trim();
             User user = apiService.getUserByUsername(username);
             // Передача сервисов и пользователя в контроллер
-            controller.setServices(bookService, authorService, readerService, bookLoanService);
+            controller.setServices(bookService, authorService, readerService, bookLoanService, userService);
             controller.setApiService(apiService);
             controller.setCurrentUser(user);
             controller.setAuth(token, role);

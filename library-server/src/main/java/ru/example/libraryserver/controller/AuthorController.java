@@ -28,9 +28,11 @@ public class AuthorController {
      * @return список авторов
      */
     @GetMapping
-    @RequireRole({"USER", "ADMIN"})
-    public List<Author> getAllAuthors(@RequestHeader("X-Auth-Token") String token) {
-        return authorRepository.findAll();
+    @RequireRole({"ADMIN", "LIBRARIAN", "USER"})
+    public List<ru.example.libraryserver.dto.AuthorDto> getAllAuthors(@RequestHeader("X-Auth-Token") String token) {
+        return authorRepository.findAll().stream()
+            .map(a -> new ru.example.libraryserver.dto.AuthorDto(a.getId(), a.getName(), a.getBirthYear()))
+            .toList();
     }
 
     /**
@@ -40,7 +42,7 @@ public class AuthorController {
      * @return ResponseEntity с автором или ошибкой
      */
     @GetMapping("/{id}")
-    @RequireRole("USER")
+    @RequireRole({"ADMIN", "LIBRARIAN", "USER"})
     public ResponseEntity<Author> getAuthorById(@RequestHeader("X-Auth-Token") String token, @PathVariable Long id) {
         Optional<Author> author = authorRepository.findById(id);
         return author.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());

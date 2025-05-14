@@ -67,4 +67,12 @@ public class AuthController {
             "role", user.getRole()
         ));
     }
+
+    @PostMapping("/register-librarian")
+    public ResponseEntity<?> registerLibrarian(@RequestBody Map<String, String> req) {
+        String username = req.get("username");
+        String password = req.get("password");
+        String token = authService.registerLibrarian(username, password);
+        return ResponseEntity.ok(Map.of("token", token));
+    }
 } 

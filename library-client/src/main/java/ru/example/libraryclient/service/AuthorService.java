@@ -7,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ru.example.libraryclient.Author;
+import ru.example.libraryclient.dto.AuthorDto;
 import java.util.List;
 
 public class AuthorService {
@@ -31,13 +32,13 @@ public class AuthorService {
         return headers;
     }
 
-    public List<Author> getAllAuthors() {
+    public List<AuthorDto> getAllAuthors() {
         HttpEntity<?> entity = new HttpEntity<>(createHeaders());
-        ResponseEntity<List<Author>> response = restTemplate.exchange(
+        ResponseEntity<List<AuthorDto>> response = restTemplate.exchange(
             baseUrl + "/api/authors",
             HttpMethod.GET,
             entity,
-            new ParameterizedTypeReference<List<Author>>() {}
+            new ParameterizedTypeReference<List<AuthorDto>>() {}
         );
         return response.getBody();
     }
@@ -53,24 +54,24 @@ public class AuthorService {
         return response.getBody();
     }
 
-    public Author createAuthor(Author author) {
-        HttpEntity<Author> entity = new HttpEntity<>(author, createHeaders());
-        ResponseEntity<Author> response = restTemplate.exchange(
+    public AuthorDto createAuthor(AuthorDto author) {
+        HttpEntity<AuthorDto> entity = new HttpEntity<>(author, createHeaders());
+        ResponseEntity<AuthorDto> response = restTemplate.exchange(
             baseUrl + "/api/authors",
             HttpMethod.POST,
             entity,
-            Author.class
+            AuthorDto.class
         );
         return response.getBody();
     }
 
-    public Author updateAuthor(Author author) {
-        HttpEntity<Author> entity = new HttpEntity<>(author, createHeaders());
-        ResponseEntity<Author> response = restTemplate.exchange(
+    public AuthorDto updateAuthor(AuthorDto author) {
+        HttpEntity<AuthorDto> entity = new HttpEntity<>(author, createHeaders());
+        ResponseEntity<AuthorDto> response = restTemplate.exchange(
             baseUrl + "/api/authors/" + author.getId(),
             HttpMethod.PUT,
             entity,
-            Author.class
+            AuthorDto.class
         );
         return response.getBody();
     }

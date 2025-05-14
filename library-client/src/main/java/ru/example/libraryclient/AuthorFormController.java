@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
+import ru.example.libraryclient.dto.AuthorDto;
+import ru.example.libraryclient.service.AuthorService;
 
 /**
  * Контроллер для формы добавления/редактирования автора.
@@ -16,24 +18,24 @@ public class AuthorFormController {
     @FXML private Button cancelBtn;
     @FXML private Label errorLabel;
 
-    private Author author;
+    private AuthorDto author;
     private boolean isEdit = false;
-    private ApiService apiService;
+    private AuthorService authorService;
     private Runnable onSuccess;
 
     /**
      * Устанавливает сервис для работы с API.
-     * @param apiService сервис для работы с API
+     * @param authorService сервис для работы с API
      */
-    public void setApiService(ApiService apiService) {
-        this.apiService = apiService;
+    public void setAuthorService(AuthorService authorService) {
+        this.authorService = authorService;
     }
 
     /**
      * Устанавливает автора для редактирования.
      * @param author автор для редактирования
      */
-    public void setAuthor(Author author) {
+    public void setAuthor(AuthorDto author) {
         this.author = author;
         if (author != null) {
             isEdit = true;
@@ -76,15 +78,15 @@ public class AuthorFormController {
             errorLabel.setText("Имя не может быть пустым");
             return;
         }
-        Author newAuthor = isEdit && author != null ? author : new Author();
+        AuthorDto newAuthor = isEdit && author != null ? author : new AuthorDto();
         newAuthor.setName(name);
         newAuthor.setBirthYear(birthYear);
         new Thread(() -> {
             try {
                 if (isEdit) {
-                    apiService.updateAuthor(newAuthor.getId(), newAuthor);
+                    authorService.updateAuthor(newAuthor);
                 } else {
-                    apiService.addAuthor(newAuthor);
+                    authorService.createAuthor(newAuthor);
                 }
                 javafx.application.Platform.runLater(() -> {
                     if (onSuccess != null) onSuccess.run();

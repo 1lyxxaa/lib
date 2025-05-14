@@ -1,4 +1,4 @@
-package ru.example.libraryserver.dto;
+package ru.example.libraryclient.dto;
 
 public class UserDto {
     private Long id;

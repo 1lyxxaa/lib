@@ -35,13 +35,13 @@ public class ReaderService {
 
     public List<Reader> getAllReaders() {
         HttpEntity<?> entity = new HttpEntity<>(createHeaders());
-        ResponseEntity<List<ReaderDto>> response = restTemplate.exchange(
+        List<ReaderDto> dtos = restTemplate.exchange(
             baseUrl + "/api/readers",
             HttpMethod.GET,
             entity,
             new ParameterizedTypeReference<List<ReaderDto>>() {}
-        );
-        return response.getBody().stream()
+        ).getBody();
+        return dtos.stream()
             .map(this::convertToReader)
             .collect(Collectors.toList());
     }
