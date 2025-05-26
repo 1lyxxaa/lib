@@ -32,7 +32,7 @@ public class StatsController {
      * @return карта с количеством книг по жанрам
      */
     @GetMapping("/genres")
-    @RequireRole("USER")
+    @RequireRole({"ADMIN", "LIBRARIAN", "USER"})
     public Map<String, Long> booksByGenre(@RequestHeader("X-Auth-Token") String token) {
         return bookRepository.findAll().stream()
                 .collect(Collectors.groupingBy(Book::getGenre, Collectors.counting()));
@@ -44,7 +44,7 @@ public class StatsController {
      * @return карта с минимальным, максимальным, средним количеством страниц и общим количеством книг
      */
     @GetMapping("/pages")
-    @RequireRole("USER")
+    @RequireRole({"ADMIN", "LIBRARIAN", "USER"})
     public Map<String, Number> pagesStats(@RequestHeader("X-Auth-Token") String token) {
         List<Book> books = bookRepository.findAll();
         IntSummaryStatistics stats = books.stream()
@@ -65,7 +65,7 @@ public class StatsController {
      * @return карта с количеством книг по авторам
      */
     @GetMapping("/authors")
-    @RequireRole("USER")
+    @RequireRole({"ADMIN", "LIBRARIAN", "USER"})
     public Map<String, Long> booksByAuthor(@RequestHeader("X-Auth-Token") String token) {
         return bookRepository.findAll().stream()
                 .filter(b -> b.getAuthor() != null)

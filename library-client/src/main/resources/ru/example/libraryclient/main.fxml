@@ -9,12 +9,18 @@
             <Button fx:id="readersBtn" text="Читатели" onAction="#handleShowReaders"/>
             <Button fx:id="bookLoansBtn" text="Выдача книг" onAction="#handleShowBookLoans"/>
             <Button fx:id="usersBtn" text="Пользователи" onAction="#handleShowUsers" visible="false"/>
+            <Button text="Статистика" onAction="#handleShowStats"/>
             <Button text="О программе" onAction="#handleAbout"/>
             <Button text="Сменить пароль" onAction="#handleChangePassword"/>
             <Button text="Выход" onAction="#handleExit"/>
         </HBox>
     </top>
     <center>
-        <StackPane fx:id="contentArea"/>
+        <StackPane fx:id="contentArea">
+            <VBox alignment="CENTER" spacing="10">
+                <Label text="Добро пожаловать в библиотечную систему!" style="-fx-font-size: 20; -fx-font-weight: bold;"/>
+                <Label text="Выберите раздел в меню сверху для начала работы." style="-fx-font-size: 14;"/>
+            </VBox>
+        </StackPane>
     </center>
 </BorderPane>

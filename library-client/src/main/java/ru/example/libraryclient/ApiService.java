@@ -189,6 +189,20 @@ public class ApiService {
     }
 
     /**
+     * Возвращает статистику по читателям (количество выдач на каждого).
+     * @return карта: ФИО -> количество выдач
+     * @throws Exception если произошла ошибка при выполнении запроса
+     */
+    public Map<String, Long> getStatsReaders() throws Exception {
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/statistics/readers"))
+                .GET();
+        if (token != null) builder.header("X-Auth-Token", token);
+        HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+        return mapper.readValue(response.body(), new TypeReference<Map<String, Long>>(){});
+    }
+
+    /**
      * Класс, представляющий результат аутентификации.
      */
     public static class AuthResult {

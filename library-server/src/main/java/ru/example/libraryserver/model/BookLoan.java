@@ -10,8 +10,8 @@ public class BookLoan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "book_id")
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "book_id", foreignKey = @ForeignKey(name = "fk_bookloan_book", foreignKeyDefinition = "FOREIGN KEY (book_id) REFERENCES book(id) ON DELETE SET NULL"))
     @JsonBackReference("book-bookloan")
     private Book book;
 

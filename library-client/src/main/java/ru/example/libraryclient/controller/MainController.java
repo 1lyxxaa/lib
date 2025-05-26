@@ -449,4 +449,19 @@ public class MainController {
             }
         });
     }
+
+    @FXML
+    private void handleShowStats() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ru/example/libraryclient/stats.fxml"));
+            Parent statsView = loader.load();
+            Object controller = loader.getController();
+            if (controller instanceof ru.example.libraryclient.StatsController statsController) {
+                if (apiService != null) statsController.setApiService(apiService);
+            }
+            contentArea.getChildren().setAll(statsView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 } 

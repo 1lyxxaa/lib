@@ -2,28 +2,51 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.chart.*?>
+<?import javafx.scene.shape.*?>
 <VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.example.libraryclient.StatsController" spacing="10" alignment="TOP_CENTER" style="-fx-padding: 15;">
     <Label text="Статистика" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
-    <TabPane fx:id="tabPane" prefWidth="500" prefHeight="300">
+    <TabPane fx:id="tabPane" prefWidth="600" prefHeight="400">
         <tabs>
             <Tab text="Жанры">
                 <VBox spacing="5" alignment="TOP_CENTER">
-                    <TableView fx:id="genreTable" prefHeight="200">
+                    <TableView fx:id="genreTable" prefHeight="150">
                         <columns>
-                            <TableColumn fx:id="genreCol" text="Жанр" prefWidth="200"/>
+                            <TableColumn fx:id="genreColorCol" text="" prefWidth="30"/>
+                            <TableColumn fx:id="genreCol" text="Жанр" prefWidth="170"/>
                             <TableColumn fx:id="genreCountCol" text="Количество книг" prefWidth="150"/>
                         </columns>
                     </TableView>
+                    <PieChart fx:id="genrePieChart" title="Распределение книг по жанрам" prefHeight="150"/>
                 </VBox>
             </Tab>
             <Tab text="Авторы">
                 <VBox spacing="5" alignment="TOP_CENTER">
-                    <TableView fx:id="authorTable" prefHeight="200">
+                    <TableView fx:id="authorTable" prefHeight="150">
                         <columns>
                             <TableColumn fx:id="authorNameCol" text="Автор" prefWidth="200"/>
                             <TableColumn fx:id="authorCountCol" text="Количество книг" prefWidth="150"/>
                         </columns>
                     </TableView>
+                    <BarChart fx:id="authorBarChart" title="Количество книг по авторам" prefHeight="150">
+                        <xAxis>
+                            <CategoryAxis label="Автор"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Книг"/>
+                        </yAxis>
+                    </BarChart>
+                </VBox>
+            </Tab>
+            <Tab text="Читатели">
+                <VBox spacing="5" alignment="TOP_CENTER">
+                    <BarChart fx:id="readerBarChart" title="Количество выдач по читателям" prefHeight="250">
+                        <xAxis>
+                            <CategoryAxis label="Читатель"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Выдач"/>
+                        </yAxis>
+                    </BarChart>
                 </VBox>
             </Tab>
             <Tab text="Страницы">
